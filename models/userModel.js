@@ -17,9 +17,13 @@ const userSchema = new Schema ({
         type: String,
         required: true
     },
-    role: {
-        type: Boolean,  // 1 (true), 0(false)
+    isPro: {
+        type: Boolean,
         required: true
+    },
+    role: {
+        type: Schema.Types.ObjectId,  // 1 (true), 0(false)
+        ref: 'Role'
     } 
 });
 const User = mongoose.model( 'User', userSchema );

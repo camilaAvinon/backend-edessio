@@ -1,14 +1,18 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema; 
 const professorSchema = new Schema ({
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
     subjects: [{
         type: Schema.Types.ObjectId,
         ref: 'Subject'
     }],
-    score: {
-        type: Number,
-        required: true
-    },
+    score: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Review'
+    }],
     password: {
         type: String,
         required: true
