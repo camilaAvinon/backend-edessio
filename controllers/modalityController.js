@@ -1,24 +1,39 @@
 const modalityModel = require('../models/modalityModel');
 
-// Se llaman por id (nada más creo)
+// Call
+exports.call = async (req, res) => {
+    try{
+        const modality = await modalityModel.find();
+        if(modality){
+            res.json({
+                msg:'Modalities:',
+                data: modality
+            });
+        }else{
+            res.json({msg:'Not found.'});
+        }
+    }catch(e){
+        console.error(e);
+        res.status(500).json({msg:'Server error.'});
+    }
+}
 
-// Llamando por id
+// Call by id
 exports.callById = async (req, res) => {
     try {
         const { modalityId } = req.params;
-        // Llamando materia
         const modality = await modalityModel.findById(modalityId);
         if (modality){
             res.json({
-                msg: 'Modalidad',
+                msg: 'Modality: ',
                 data: modality
             });
         } else {
-            res.json({msg: 'Modalidad no encontrada'});
+            res.json({msg: 'Not found.'});
         }
     } catch (e) {
         console.log(e);
-        res.status(500).json( { msg: 'Error en el servidor.' });
+        res.status(500).json({msg:'Server error.'});
     }
 }
 

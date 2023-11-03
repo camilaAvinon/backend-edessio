@@ -1,4 +1,5 @@
 const userModel = require('../models/userModel');
+const professorModel = require('../models/professorModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const salt = 10;
@@ -39,12 +40,16 @@ const key =  "blog";
 // Crear
 exports.create = async( req, res ) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, location, isPro, role, birth } = req.body;
         // Validaciones
-        if( !name || !email || !password ){
-            res.status(400).json( { msg: 'Se enviaron campos vacios.'});
+        if( !name || !email || !password || !location || !isPro || !role || !birth ){
+            res.status(400).json({msg:'There are empty fields.'});
         } else if (typeof name != 'string'){
-            res.status(400).json({ msg: 'El nombre ingresado no es valido.'});
+            res.status(400).json({ msg: 'Name is not valid.'});
+        } else if (typeof email != 'string'){
+            res.status(400).json({ msg: 'Email is not valid.'});
+        }else if (typeof password != 'string'){
+            res.status(400).json({ msg: 'Email is not valid.'});
         }
         // Hasheo de la contraseña
         const passHash = await bcrypt.hash( password, salt );
@@ -61,7 +66,7 @@ exports.create = async( req, res ) => {
         });
     } catch (e) {
         console.log(e);
-        res.status(500).json( { msg: 'Error en el servidor.' } );
+        res.status(500).json({msg:'Server error.'});
     }
 }
 
