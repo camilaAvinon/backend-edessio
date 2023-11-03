@@ -1,67 +1,73 @@
+// Falta eliminar
+
 const userModel = require('../models/userModel');
 const professorModel = require('../models/professorModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const salt = 10;
-
 //Preguntar como es el tema de no compratir la key
-const key =  "blog";
+const key =  "edessio";
 
-// Se crean, modifican, eliminan (o se "eliminan para no perder la información"), se llaman por id, se llaman todos, y se autentican (?)
+// Autenticar
+exports.auth = async (req, res) => {
+    try {
+        const {email,password} = req.body;
+        if (!email || !password ){
+            res.status(400).json({msg:'There are empty fields.'});
+        }
+        const user = await userModel.findOne( {email} );
+        if (!user){
+            res.status(401).json({msg:'Not found.'});
+        }
+        const validPassword = await bcrypt.compare(password,user.password);
+        if (!validPassword){
+            res.status(401).json({msg:'Invalid credentials.'});
+        }
+        const token = jwt.sign({userId:user._id},key,{expiresIn:'2h'}); //Ver cuanto poner de expiresIn
+        res.status(201).json({ 
+            msg:'User authenticated.', 
+            token
+        });
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({msg:'Server error.'});
+    }
+}
 
-// // Autenticar
-// exports.auth = async (req, res) => {
-//     try {
-//         const { email, password } = req.body;
-//         if (!email || !password ){
-//             res.status(400).json( { msg: 'Se enviaron campos vacios.' } );
-//         }
-//         const user = await userModel.findOne( {email} );
-//         if ( !user ){
-//             res.status(401).json({ msg: 'El usuario ingresado no coincide con nuestros registros.' });
-//         }
-//         // Validando la contraseña
-//         const validPassword = await bcrypt.compare( password, user.password );
-//         if ( !validPassword ){
-//             res.status(401).json({ msg: 'Credenciales invalidas.' });
-//         }
-//         // Generando JWT
-//         const token = jwt.sign({ userId: user._id}, key, { expiresIn: '2h' });
-//         res.status(201).json({ 
-//             msg: 'Usuario autenticado.', 
-//             token
-//         });
-//     } catch (e) {
-//         console.log(e);
-//         res.status(500).json( { msg: 'Error en el servidor.' } );
-//     }
-// }
-
-// Crear
+// Create
 exports.create = async( req, res ) => {
     try {
         const { name, email, password, location, isPro, role, birth } = req.body;
-        // Validaciones
         if( !name || !email || !password || !location || !isPro || !role || !birth ){
             res.status(400).json({msg:'There are empty fields.'});
         } else if (typeof name != 'string'){
-            res.status(400).json({ msg: 'Name is not valid.'});
+            res.status(400).json({ msg:'Name is not valid.'});
         } else if (typeof email != 'string'){
-            res.status(400).json({ msg: 'Email is not valid.'});
-        }else if (typeof password != 'string'){
-            res.status(400).json({ msg: 'Email is not valid.'});
+            res.status(400).json({ msg:'Email is not valid.'});
+        } else if (typeof password != 'string'){
+            res.status(400).json({ msg:'Password is not valid.'});
+        } else if (typeof location != 'string'){
+            res.status(400).json({msg:'Location is not valid.'});
         }
-        // Hasheo de la contraseña
         const passHash = await bcrypt.hash( password, salt );
         const newUser = new userModel({
             name: name,
             email: email,
-            password: passHash
+            password: passHash,
+            location: location,
+            isPro: isPro,
+            role: role,
+            birth: birth
         });
-        // Creando del usuario
         await newUser.save();
+        //Ver que tipo de rol tiene y llamar al create de profesor asi se le guarda el newUser._id
+        /*
+        if (role ==  algo){
+            aca se crearia el profesor haciendo la referencia, no tengo ni idea de como
+        }
+        */
         res.status(201).json({
-            msg: 'Usuario Guardado.' , 
+            msg: 'User created.' , 
             id: newUser._id 
         });
     } catch (e) {
@@ -70,37 +76,44 @@ exports.create = async( req, res ) => {
     }
 }
 
-// // Actualizar
-// exports.update = async (req, res) => {
-//     try {
-//         const user = req.body;
-//         const { userId } = req.params;
-//         // Validaciones
-//         if( !user.name || !user.email || !user.password ){
-//             res.status(400).json( { msg: 'Se enviaron campos vacios.'});
-//         } else if (typeof user.name != 'string'){
-//             res.status(400).json({ msg: 'El nombre ingresado no es valido.'});
-//         }
-//         const filter = { _id: userId };
-//         const passHash = await bcrypt.hash( user.password, salt );
-//         const data = { 
-//             name: user.name,
-//             email: user.email,
-//             password: passHash,
-//         }
-//         // Actualizando usuario
-//         const result = await userModel.updateOne( filter, data );
-//         res.json({
-//             msg: 'Usuario actualizado.', 
-//             data: result  
-//         });
-//     } catch (e) {
-//         console.log(error);
-//         res.json({
-//             msg: 'Error en el servidor. '   
-//         });
-//     }
-// }
+// Update
+exports.update = async (req, res) => {
+    try {
+        const user = req.body;
+        const { userId } = req.params;
+        // Puede actualizar el mail, contraseña, localidad, fecha de nacimiento. Para hacerlo pro se hace con otro?
+        if( !user.name || !user.email || !user.password || !user.location || !user.birth ){
+            res.status(400).json( { msg: 'Se enviaron campos vacios.'});
+        } else if (typeof user.name != 'string'){
+            res.status(400).json({ msg: 'El nombre ingresado no es valido.'});
+        } else if (typeof user.email != 'string'){
+            res.status(400).json({ msg: 'Email is not valid.'});
+        } else if (typeof user.password != 'string'){
+            res.status(400).json({ msg: 'Password is not valid.'});
+        } else if (typeof user.location != 'string'){
+            res.status(400).json({ msg: 'Location is not valid.'});
+        }
+        const filter = { _id: userId };
+        const passHash = await bcrypt.hash( user.password, salt );
+        const data = { 
+            name: user.name,
+            email: user.email,
+            password: passHash,
+            location: user.location,
+            birth: user.birth
+        }
+        const result = await userModel.updateOne( filter, data );
+        res.json({
+            msg: 'User updated.', 
+            data: result  
+        });
+    } catch (e) {
+        console.log(error);
+        res.json({
+            msg: 'Server error. '   
+        });
+    }
+}
 
 // // Eliminar
 // exports.delete = async (req, res) => {
@@ -119,41 +132,39 @@ exports.create = async( req, res ) => {
 //     }
 // }
 
-// // Llamar a todos
-// exports.call = async (req, res) => {
-//     try {
-//         // Llamando a los usuarios
-//         const users = await userModel.find();
-//         if (users){
-//             res.json({
-//                 msg: 'Lista de usuarios', 
-//                 data: users  
-//             });
-//         } else {
-//             res.json({msg: 'No se encontro la informacion.'});
-//         }
-//     } catch (e) {
-//         console.log(e);
-//         res.status(500).json( { msg: 'Error en el servidor.' });
-//     }
-// }
+// Call
+exports.call = async (req, res) => {
+    try {
+        const users = await userModel.find();
+        if (users){
+            res.json({
+                msg: 'Users', 
+                data: users  
+            });
+        } else {
+            res.json({msg:'Not found.'});
+        }
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({msg:'Server error.'});
+    }
+}
 
-// // Llamar por id
-// exports.callById = async (req, res) => {
-//     try {
-//         const { userId } = req.params;
-//         // Llamando al usuario
-//         const users = await userModel.findById(userId);
-//         if (users){
-//             res.json({
-//                 msg: 'Usuario', 
-//                 data: users  
-//             });
-//         } else {
-//             res.json({msg: 'Usuario no encontrado.'});
-//         }
-//     } catch (e) {
-//         console.log(e);
-//         res.status(500).json( { msg: 'Usuario no encontrado.' });
-//     }
-// }
+// Call by id
+exports.callById = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const users = await userModel.findById(userId);
+        if (users){
+            res.json({
+                msg: 'User', 
+                data: users  
+            });
+        } else {
+            res.json({msg: 'Not found.'});
+        }
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({msg:'Server error.'});
+    }
+}

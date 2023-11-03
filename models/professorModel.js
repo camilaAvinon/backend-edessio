@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema; 
-const professorSchema = new Schema ({
+const professorSchema = new Schema ({ //Faltan los estudios
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'User'
@@ -13,18 +13,10 @@ const professorSchema = new Schema ({
         type: Schema.Types.ObjectId,
         ref: 'Review'
     }],
-    password: {
-        type: String,
-        required: true
-    },
-    location: {
-        type: String,
-        required: true
-    },
     modalityId: {
         type: Schema.Types.ObjectId,
         ref: 'Modality'
     }
 });
-const Professor = mongoose.model( 'Professor', professorSchema );
+const Professor = mongoose.model('Professor',professorSchema);
 module.exports = Professor;
