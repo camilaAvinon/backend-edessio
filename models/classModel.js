@@ -8,11 +8,11 @@ const classSchema = new Schema({
     },
     studentId:[{
         type: Schema.Types.ObjectId,
-        required: true
+        ref: 'Students'
     }],
     professorId: {
         type: Schema.Types.ObjectId,
-        default: 'Professor'
+        ref: 'Professor'
     },
     modalityId: {
         type: Schema.Types.ObjectId,
