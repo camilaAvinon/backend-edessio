@@ -80,12 +80,12 @@ exports.create = async( req, res ) => {
 exports.update = async (req, res) => {
     try {
         const user = req.body;
-        const { userId } = req.params;
+        const {userId} = req.params;
         // Puede actualizar el mail, contraseña, localidad, fecha de nacimiento. Para hacerlo pro se hace con otro?
         if( !user.name || !user.email || !user.password || !user.location || !user.birth ){
-            res.status(400).json( { msg: 'Se enviaron campos vacios.'});
+            res.status(400).json( { msg: 'There are empty fields.'});
         } else if (typeof user.name != 'string'){
-            res.status(400).json({ msg: 'El nombre ingresado no es valido.'});
+            res.status(400).json({ msg: 'Name is not valid.'});
         } else if (typeof user.email != 'string'){
             res.status(400).json({ msg: 'Email is not valid.'});
         } else if (typeof user.password != 'string'){
@@ -93,7 +93,7 @@ exports.update = async (req, res) => {
         } else if (typeof user.location != 'string'){
             res.status(400).json({ msg: 'Location is not valid.'});
         }
-        const filter = { _id: userId };
+        const filter = {_id: userId};
         const passHash = await bcrypt.hash( user.password, salt );
         const data = { 
             name: user.name,
@@ -102,7 +102,7 @@ exports.update = async (req, res) => {
             location: user.location,
             birth: user.birth
         }
-        const result = await userModel.updateOne( filter, data );
+        const result = await userModel.updateOne(filter,data);
         res.json({
             msg: 'User updated.', 
             data: result  

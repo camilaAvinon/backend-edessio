@@ -36,11 +36,73 @@ exports.create = async (req, res) => {
 }
 
 // Update
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
     try{
-        const class = req.body;
+        const classes = req.body;
+        const {classId} = req.params;
+        // Hay que ver quienes la podrian modificar, para i el profesor. Pueden modificar fecha, alumnos, materia
+        if(!classes.date||!classes.studentId||!classes.subjectId||!classes.modalityId){
+            res.status(400).json( { msg: 'There are empty fields.'});
+        }else if(typeof(date)!=Date){
+            res.status(400).json({ msg: 'Date is not valid.'});
+        }
+        const filter = {_id: classId};
+        const data = {
+            date: classes.date,
+            studentId: classes.studentId,
+            subjectId: classes.subjectId,
+            modalityId: classes.modalityId
+        }
+        const result = await classModel.updateOne(filter, data);
+        res.json({
+            msg:'Class updated.',
+            data: result
+        });
     }catch(e){
         console.error(e);
         res.status(500).json({msg:'Server error'});
     }
 }
+
+// ELiminar - Desactivar
+
+// Call
+exports.call = async (req, res) => {
+    try{
+        const classes = await classModel.find();
+        if(classes){
+            res.json({
+                msg:'Classes',
+                data:classes
+            });
+        }else{
+            res.json({msg:'Not found.'});
+        }
+    }catch(e){
+        console.error(e);
+        res.status(500).json({msg:'Server error.'});
+    }
+}
+
+// Call by id
+exports.callById = async (req, res) => {
+    try{
+        const {classId} = req.params;
+        const classes = await classModel.findById(classId);
+        if(classes){
+            res.json({
+                msg:'Class:',
+                data: classes
+            });
+        }else{
+            res.json({msg:'Not found.'});
+        }
+    }catch(e){
+        console.error(e);
+        res.status(500).json({msg:'Server error.'});
+    }
+}
+
+// Call by professor
+// Call by subject
+// Call by date
