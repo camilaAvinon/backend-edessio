@@ -6,6 +6,7 @@ const classController = require('./controllers/classController');
 const subjectController = require('./controllers/subjectController');
 const modalityController = require('./controllers/modalityController');
 const professorController = require('./controllers/professorController');
+const roleController = require('./controllers/roleController');
 const app = express();
 const port = 3000;
 // const key =  "blog";
@@ -37,26 +38,38 @@ dataBase.once( 'open', ()=> {
     console.log('Conexión con la base de datos exitosa.');
 });
 
-// // Rutas
-// app.get('/', (req, res) => {
-//     res.send('<h1>Api Blog</h1>');
-// });
+// Rutas
+app.get('/', (req, res) => {
+    res.send('<h1>Bienvenido a Edessio</h1>');
+});
 
 // //Ruta autenticación
 // app.post('/blog/authentication', userController.auth);
 
 
-// //Rutas usuarios
-// app.get('/blog/users', userController.call);
-// app.get('/blog/users/:userId', userController.callById);
-// // Rutas protegidas de usuarios
-// app.post('/blog/users', validatingToken, userController.create);
-// app.put('/blog/users/:userId', validatingToken, userController.update);
-// app.delete('/blog/users/:userId', validatingToken, userController.delete);
+// Users
+app.get('/edessio/users', userController.call);
+app.get('/edessio/users/:userId', userController.callById);
+app.post('/edessio/users', userController.create);
+app.put('/edessio/users/:userId', userController.update);
 
-// //Rutas posteos
-// app.get('/blog/posts', postController.call);
-// app.get('/blog/posts/:postId', postController.callById);
+// Classes
+app.get('/edessio/classes', classController.call);
+app.get('/edessio/classes/:classId', classController.callById);
+app.post('/edessio/classes', classController.create);
+app.put('/edessio/classes/:classId', classController.update);
+
+// Modalities
+app.get('/edessio/modalities', modalityController.call);
+app.get('/edessio/modalities/:modalityId', modalityController.callById);
+
+// Subjects
+app.get('/edessio/subjects', subjectController.call);
+app.get('/edessio/subjects/:subjectId', subjectController.callById);
+
+// Roles
+app.get('/edessio/roles', roleController.call);
+app.get('/edessio/roles/:roleId', roleController.callById);
 
 // // Rutas protegidas de posteos
 // app.post('/blog/posts', validatingToken, postController.create);

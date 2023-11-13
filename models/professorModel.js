@@ -18,5 +18,6 @@ const professorSchema = new Schema ({ //Faltan los estudios
         ref: 'Modality'
     }
 });
+
 const Professor = mongoose.model('Professor',professorSchema);
 module.exports = Professor;

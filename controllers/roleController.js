@@ -1,9 +1,6 @@
 const roleModel = require('../models/roleModel');
 
-// Llamar por id
-// Llamar todos
-
-// Get all
+// Call - Funciona
 exports.call = async (req, res) => {
     try {
         const roles = await roleModel.find();
@@ -21,7 +18,7 @@ exports.call = async (req, res) => {
     }
 }
 
-//Get by id
+// Call by id - Funciona
 exports.callById = async (req, res) => {
     try {
         const {roleId} = req.params;

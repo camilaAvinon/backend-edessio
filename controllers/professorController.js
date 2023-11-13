@@ -74,7 +74,7 @@ exports.callById = async (req, res) => {
         const professor = await professorModel.findById(professorId);
         if (professor){
             res.json({
-                msg: 'Professor',
+                msg: 'Professor:',
                 data: professor
             });
         }else{
@@ -86,4 +86,21 @@ exports.callById = async (req, res) => {
     }
 }
 
-// Call by subject --> Aca se va a tener que meter al array de materias para llamar a los profesores o como? no tengo ni idea
+// Call by subject
+exports.callBySubject = async(req, res) => {
+    try{
+        const {subjectId} = req.params;
+        const professor = await professorsModel.find({subjectId:subjectId});
+        if (professor){
+            res.json({
+                msg:'Professor:',
+                data: professor
+            })
+        }else{
+            res.json({msg:'Not found.'})
+        }
+    }catch(e){
+        console.error(e);
+        res.status(500).json({msg:'Server error.'})
+    }
+}

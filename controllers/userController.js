@@ -1,5 +1,3 @@
-// Falta eliminar
-
 const userModel = require('../models/userModel');
 const professorModel = require('../models/professorModel');
 const jwt = require('jsonwebtoken');
@@ -9,30 +7,30 @@ const salt = 10;
 const key =  "edessio";
 
 // Autenticar
-exports.auth = async (req, res) => {
-    try {
-        const {email,password} = req.body;
-        if (!email || !password ){
-            res.status(400).json({msg:'There are empty fields.'});
-        }
-        const user = await userModel.findOne( {email} );
-        if (!user){
-            res.status(401).json({msg:'Not found.'});
-        }
-        const validPassword = await bcrypt.compare(password,user.password);
-        if (!validPassword){
-            res.status(401).json({msg:'Invalid credentials.'});
-        }
-        const token = jwt.sign({userId:user._id},key,{expiresIn:'2h'}); //Ver cuanto poner de expiresIn
-        res.status(201).json({ 
-            msg:'User authenticated.', 
-            token
-        });
-    } catch (e) {
-        console.log(e);
-        res.status(500).json({msg:'Server error.'});
-    }
-}
+// exports.auth = async (req, res) => {
+//     try {
+//         const {email,password} = req.body;
+//         if (!email || !password ){
+//             res.status(400).json({msg:'There are empty fields.'});
+//         }
+//         const user = await userModel.findOne( {email} );
+//         if (!user){
+//             res.status(401).json({msg:'Not found.'});
+//         }
+//         const validPassword = await bcrypt.compare(password,user.password);
+//         if (!validPassword){
+//             res.status(401).json({msg:'Invalid credentials.'});
+//         }
+//         const token = jwt.sign({userId:user._id},key,{expiresIn:'2h'}); //Ver cuanto poner de expiresIn
+//         res.status(201).json({ 
+//             msg:'User authenticated.', 
+//             token
+//         });
+//     } catch (e) {
+//         console.log(e);
+//         res.status(500).json({msg:'Server error.'});
+//     }
+// }
 
 // Create
 exports.create = async( req, res ) => {
@@ -63,6 +61,10 @@ exports.create = async( req, res ) => {
         //Ver que tipo de rol tiene y llamar al create de profesor asi se le guarda el newUser._id
         /*
         if (role ==  algo){
+            const newProfessor = new professorModel({
+                ...
+            });
+            await newProfessor.save()
             aca se crearia el profesor haciendo la referencia, no tengo ni idea de como
         }
         */

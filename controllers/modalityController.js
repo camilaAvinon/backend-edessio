@@ -1,6 +1,6 @@
 const modalityModel = require('../models/modalityModel');
 
-// Call
+// Call - Funciona
 exports.call = async (req, res) => {
     try{
         const modality = await modalityModel.find();
@@ -18,7 +18,7 @@ exports.call = async (req, res) => {
     }
 }
 
-// Call by id
+// Call by id  - Funciona
 exports.callById = async (req, res) => {
     try {
         const { modalityId } = req.params;

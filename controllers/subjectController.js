@@ -29,7 +29,7 @@ const subjectModel = require('../models/subjectModel');
 //     }
 // }
 
-// Call
+// Call - Funciona
 exports.call = async (req, res) => {
     try {
         const subjects = await subjectModel.find();
@@ -47,7 +47,7 @@ exports.call = async (req, res) => {
     }
 }
 
-// Call by id
+// Call by id - Funciona
 exports.callById = async (req, res) => {
     try {
         const { subjectId } = req.params;
