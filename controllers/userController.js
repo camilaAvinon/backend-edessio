@@ -1,5 +1,7 @@
 const userModel = require('../models/userModel');
 const professorModel = require('../models/professorModel');
+const roleController = require('../models/roleModel');
+const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const salt = 10;
@@ -35,8 +37,8 @@ const key =  "edessio";
 // Create
 exports.create = async( req, res ) => {
     try {
-        const { name, email, password, location, isPro, role, birth } = req.body;
-        if( !name || !email || !password || !location || !isPro || !role || !birth ){
+        const { name, email, password, isPro, role, birth } = req.body;
+        if( !name || !email || !password || !isPro || !role || !birth ){
             res.status(400).json({msg:'There are empty fields.'});
         } else if (typeof name != 'string'){
             res.status(400).json({ msg:'Name is not valid.'});
@@ -44,35 +46,49 @@ exports.create = async( req, res ) => {
             res.status(400).json({ msg:'Email is not valid.'});
         } else if (typeof password != 'string'){
             res.status(400).json({ msg:'Password is not valid.'});
-        } else if (typeof location != 'string'){
-            res.status(400).json({msg:'Location is not valid.'});
         }
         const passHash = await bcrypt.hash( password, salt );
         const newUser = new userModel({
             name: name,
             email: email,
             password: passHash,
-            location: location,
             isPro: isPro,
             role: role,
             birth: birth
-        });
+        })
         await newUser.save();
-        //Ver que tipo de rol tiene y llamar al create de profesor asi se le guarda el newUser._id
-        /*
-        if (role ==  algo){
+        if (role == roleController.find('Professor')){
+            console.log('entré')
+            const { subjects, modalityId} = req.body
+            if (!subjects||!modalityId){
+                res.status(400).json({msg:'There are empty fields.'});
+            } else if (subjects.empty()){ // Validar ids de las materias
+                res.status(400).json({ msg:'Subjects are not valid.'});
+            } else if (typeof modalityId != 'string' && modalityId.length<12){
+                res.status(400).json({ msg:'Modality is not valid.'});
+            }
             const newProfessor = new professorModel({
-                ...
-            });
-            await newProfessor.save()
-            aca se crearia el profesor haciendo la referencia, no tengo ni idea de como
+                userId: newUser._id,
+                subjects: subjects,
+                modalityId: modalityId
+            })
+            await newProfessor.save();
         }
-        */
         res.status(201).json({
             msg: 'User created.' , 
             id: newUser._id 
         });
-    } catch (e) {
+        // //Ver que tipo de rol tiene y llamar al create de profesor asi se le guarda el newUser._id
+        // /*
+        // if (role ==  algo){
+        //     const newProfessor = new professorModel({
+        //         ...
+        //     });
+        //     await newProfessor.save()
+        //     aca se crearia el profesor haciendo la referencia, no tengo ni idea de como
+        // }
+        // */
+    } catch (e) { // Crea los usuarios pero entra al catch
         console.log(e);
         res.status(500).json({msg:'Server error.'});
     }

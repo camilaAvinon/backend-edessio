@@ -12,10 +12,10 @@ const userSchema = new Schema ({
     password: {
         type: String,
         required: true
-    },
-    location: { // ??
-        type: String,
-        required: true
+    // },
+    // location: { // ??
+    //     type: String,
+    //     required: true
     },
     isPro: {
         type: Boolean,
@@ -26,7 +26,7 @@ const userSchema = new Schema ({
         ref: 'Role'
     },
     birth: {
-        type: Date,
+        type: String, //ver como guardar la fecha
         require: true
     }
 });

@@ -5,7 +5,7 @@ const professorSchema = new Schema ({ //Faltan los estudios
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    subjects: [{
+    subjectsId: [{
         type: Schema.Types.ObjectId,
         ref: 'Subject'
     }],

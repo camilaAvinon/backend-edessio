@@ -18,7 +18,7 @@ exports.create = async (req, res) => {
             modalityId: modalityId
         });
         await newProfessor.save();
-        res.status(201).json({msg:'Professor created.'});
+        // res.status(201).json({msg:'Professor created.'});
     }catch(e){
         console.error(e);
         res.status(500).json({msg:'Server error'});

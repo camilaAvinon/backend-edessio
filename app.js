@@ -1,6 +1,7 @@
 const express = require('express');
 const dataBase = require('./database');
 const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser');
 const userController = require('./controllers/userController');
 const classController = require('./controllers/classController');
 const subjectController = require('./controllers/subjectController');
@@ -8,7 +9,13 @@ const modalityController = require('./controllers/modalityController');
 const professorController = require('./controllers/professorController');
 const roleController = require('./controllers/roleController');
 const app = express();
-const port = 3000;
+app.use(bodyParser.json());
+app.use(
+    bodyParser.urlencoded({
+        extended: true,
+    }),
+);
+const port = 2026;
 // const key =  "blog";
 
 // app.use(express.json());
