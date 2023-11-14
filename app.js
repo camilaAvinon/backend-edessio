@@ -32,10 +32,10 @@ const port = 3000;
 
 // Conexión con la BDD
 dataBase.on( 'error', () => {
-    console.error('Error de conexion con la base de datos.')
+    console.error('Failed at connecting with the database.')
 });
 dataBase.once( 'open', ()=> {
-    console.log('Conexión con la base de datos exitosa.');
+    console.log('Database connection successful.');
 });
 
 // Rutas
