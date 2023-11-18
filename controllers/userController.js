@@ -1,6 +1,6 @@
 const userModel = require('../models/userModel');
 const professorModel = require('../models/professorModel');
-const roleController = require('../models/roleModel');
+const roleModel = require('../models/roleModel');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -38,14 +38,18 @@ const key =  "edessio";
 exports.create = async( req, res ) => {
     try {
         const { name, email, password, isPro, role, birth } = req.body;
-        if( !name || !email || !password || !isPro || !role || !birth ){
-            res.status(400).json({msg:'There are empty fields.'});
+        if( !name || !email || !password  || !role || !birth ){
+            // res.status(400).json({msg:'There are empty fields.'});
+            console.log('campos vacíos');
         } else if (typeof name != 'string'){
-            res.status(400).json({ msg:'Name is not valid.'});
+            // res.status(400).json({ msg:'Name is not valid.'});
+            console.log('nombre no valido');
         } else if (typeof email != 'string'){
-            res.status(400).json({ msg:'Email is not valid.'});
+            // res.status(400).json({ msg:'Email is not valid.'});
+            console.log('email no valido');
         } else if (typeof password != 'string'){
-            res.status(400).json({ msg:'Password is not valid.'});
+            // res.status(400).json({ msg:'Password is not valid.'});
+            console.log('contraseña no valida');
         }
         const passHash = await bcrypt.hash( password, salt );
         const newUser = new userModel({
@@ -56,38 +60,29 @@ exports.create = async( req, res ) => {
             role: role,
             birth: birth
         })
-        await newUser.save();
-        if (role == roleController.find('Professor')){
+        // await newUser.save();
+        console.log(roleModel.find({name: "Professor"})) // Preguntar por qué esto devuelve un query en vez del objecto
+        if (role == roleModel.find({name: "Professor"})){
             console.log('entré')
-            const { subjects, modalityId} = req.body
-            if (!subjects||!modalityId){
-                res.status(400).json({msg:'There are empty fields.'});
-            } else if (subjects.empty()){ // Validar ids de las materias
-                res.status(400).json({ msg:'Subjects are not valid.'});
-            } else if (typeof modalityId != 'string' && modalityId.length<12){
-                res.status(400).json({ msg:'Modality is not valid.'});
-            }
-            const newProfessor = new professorModel({
-                userId: newUser._id,
-                subjects: subjects,
-                modalityId: modalityId
-            })
-            await newProfessor.save();
+            // const { subjects, modalityId} = req.body
+            // if (!subjects||!modalityId){
+            //     res.status(400).json({msg:'There are empty fields.'});
+            // } else if (subjects.empty()){ // Validar ids de las materias
+            //     res.status(400).json({ msg:'Subjects are not valid.'});
+            // } else if (typeof modalityId != 'string' && modalityId.length<12){
+            //     res.status(400).json({ msg:'Modality is not valid.'});
+            // }
+            // const newProfessor = new professorModel({
+            //     userId: newUser._id,
+            //     subjects: subjects,
+            //     modalityId: modalityId
+            // })
+            // await newProfessor.save();
         }
-        res.status(201).json({
-            msg: 'User created.' , 
-            id: newUser._id 
-        });
-        // //Ver que tipo de rol tiene y llamar al create de profesor asi se le guarda el newUser._id
-        // /*
-        // if (role ==  algo){
-        //     const newProfessor = new professorModel({
-        //         ...
-        //     });
-        //     await newProfessor.save()
-        //     aca se crearia el profesor haciendo la referencia, no tengo ni idea de como
-        // }
-        // */
+        // res.status(201).json({
+        //     msg: 'User created.' , 
+        //     id: newUser._id 
+        // });
     } catch (e) { // Crea los usuarios pero entra al catch
         console.log(e);
         res.status(500).json({msg:'Server error.'});
