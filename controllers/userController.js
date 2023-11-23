@@ -61,28 +61,27 @@ exports.create = async( req, res ) => {
             birth: birth
         })
         // await newUser.save();
-        console.log(roleModel.find({name: "Professor"})) // Preguntar por qué esto devuelve un query en vez del objecto
-        if (role == roleModel.find({name: "Professor"})){
-            console.log('entré')
-            // const { subjects, modalityId} = req.body
-            // if (!subjects||!modalityId){
-            //     res.status(400).json({msg:'There are empty fields.'});
-            // } else if (subjects.empty()){ // Validar ids de las materias
+        const result = await roleModel.findOne({name: "Professor"});
+        if (role == result._id){
+            const { subjectsId , modalityId } = req.body
+            if (subjectsId == [] || !modalityId){
+                res.status(400).json({msg:'There are empty fields.'});
+            // } else if (subjectsId.empty()){ // Validar ids de las materias
             //     res.status(400).json({ msg:'Subjects are not valid.'});
-            // } else if (typeof modalityId != 'string' && modalityId.length<12){
-            //     res.status(400).json({ msg:'Modality is not valid.'});
-            // }
-            // const newProfessor = new professorModel({
-            //     userId: newUser._id,
-            //     subjects: subjects,
-            //     modalityId: modalityId
-            // })
-            // await newProfessor.save();
+            } else if (typeof modalityId != 'string' && modalityId.length<12){ //Validar si la modalidad existe
+                res.status(400).json({ msg:'Modality is not valid.'});
+            }
+            const newProfessor = new professorModel({
+                userId: newUser._id,
+                subjectsId: subjectsId,
+                modalityId: modalityId
+            })
+            await newProfessor.save();
         }
-        // res.status(201).json({
-        //     msg: 'User created.' , 
-        //     id: newUser._id 
-        // });
+        res.status(201).json({
+            msg: 'User created.' , 
+            id: newUser._id 
+        });
     } catch (e) { // Crea los usuarios pero entra al catch
         console.log(e);
         res.status(500).json({msg:'Server error.'});
