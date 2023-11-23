@@ -60,7 +60,7 @@ exports.create = async( req, res ) => {
             role: role,
             birth: birth
         })
-        // await newUser.save();
+        await newUser.save();
         const result = await roleModel.findOne({name: "Professor"});
         if (role == result._id){
             const { subjectsId , modalityId } = req.body
