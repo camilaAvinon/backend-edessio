@@ -1,0 +1,4 @@
+cuando se cree el profesor que ponga precio por hora y descripcion
+ver como mostrar las cosas que dependen de ids de otras tablas (materias)
+validaciones
+hacer lo del cors en el backend
