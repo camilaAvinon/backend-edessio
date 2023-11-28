@@ -27,7 +27,7 @@ const userSchema = new Schema ({
     },
     birth: {
         type: String, //ver como guardar la fecha
-        require: true
+        required: true
     }
 });
 const User = mongoose.model( 'User', userSchema );
