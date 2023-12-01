@@ -34,22 +34,18 @@ const key =  "edessio";
 //     }
 // }
 
-// Create
+// Create --> TO DO: Validaciones
 exports.create = async( req, res ) => {
     try {
         const { name, email, password, isPro, role, birth } = req.body;
         if( !name || !email || !password  || !role || !birth ){
-            // res.status(400).json({msg:'There are empty fields.'});
-            console.log('campos vacíos');
+            res.status(400).json({msg:'There are empty fields.'});
         } else if (typeof name != 'string'){
-            // res.status(400).json({ msg:'Name is not valid.'});
-            console.log('nombre no valido');
+            res.status(400).json({ msg:'Name is not valid.'});
         } else if (typeof email != 'string'){
-            // res.status(400).json({ msg:'Email is not valid.'});
-            console.log('email no valido');
+            res.status(400).json({ msg:'Email is not valid.'});
         } else if (typeof password != 'string'){
-            // res.status(400).json({ msg:'Password is not valid.'});
-            console.log('contraseña no valida');
+            res.status(400).json({ msg:'Password is not valid.'});
         }
         const passHash = await bcrypt.hash( password, salt );
         const newUser = new userModel({
@@ -63,18 +59,22 @@ exports.create = async( req, res ) => {
         await newUser.save();
         const result = await roleModel.findOne({name: "Professor"});
         if (role == result._id){
-            const { subjectsId , modalityId } = req.body
-            if (subjectsId == [] || !modalityId){
+            const { subjectsId , modalityId, description, price } = req.body
+            if (subjectsId == [] || !modalityId || !description || !price){
                 res.status(400).json({msg:'There are empty fields.'});
-            // } else if (subjectsId.empty()){ // Validar ids de las materias
-            //     res.status(400).json({ msg:'Subjects are not valid.'});
-            } else if (typeof modalityId != 'string' && modalityId.length<12){ //Validar si la modalidad existe
+            } else if ( typeof(modalityId) != 'string' && modalityId.length < 12){
                 res.status(400).json({ msg:'Modality is not valid.'});
+            } else if (typeof description != 'string'){
+                res.status(400).json({ msg:'Description is not valid.'});
+            } else if (typeof price != 'number'){
+                res.status(400).json({ msg:'Price is not valid.'});                
             }
             const newProfessor = new professorModel({
                 userId: newUser._id,
                 subjectsId: subjectsId,
-                modalityId: modalityId
+                modalityId: modalityId,
+                description: description,
+                price: price
             })
             await newProfessor.save();
         }
@@ -82,7 +82,7 @@ exports.create = async( req, res ) => {
             msg: 'User created.' , 
             id: newUser._id 
         });
-    } catch (e) { // Crea los usuarios pero entra al catch
+    } catch (e) {
         console.log(e);
         res.status(500).json({msg:'Server error.'});
     }

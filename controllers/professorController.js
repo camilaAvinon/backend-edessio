@@ -54,33 +54,7 @@ const roleModel = require('../models/roleModel');
 // Call
 exports.call = async (req, res) => {
     try{
-        const role = await roleModel.find({name: 'Professor'});
-        const roleId = role[0]._id;
-        //console.log(role);
-        const users = await userModel.find({ role: roleId});
-
-        console.log('Prosesores ', users);
-
-        const professors = await professorModel.find().populate('User');
-
-
-        //const users = await userModel.find({_id: profe.userId});
-        const listProfessors = users
-
-
-/*         professors.forEach(  async (profe) => {
-           // console.log(profe.userId);    
-            const user = await userModel.findById({_id: profe.userId});
-            if( user){
-                console.log("usuario", user);
-                listProfessors.push(user)
-            }
-        }); */
-                // professors.forEach(professor  => {
-        //     professorsIds.push(professor._id);
-        // });
-
- 
+        const professors = await professorModel.find().populate('userId').populate('subjectsId');
         if (professors){
             res.json({
                 msg:'Professors',
@@ -94,6 +68,48 @@ exports.call = async (req, res) => {
         res.status(500).json({msg:'Server error.'});
     }
 }
+// exports.call = async (req, res) => {
+//     try{
+//         const role = await roleModel.find({name: 'Professor'});
+//         const roleId = role[0]._id;
+//         //console.log(role);
+//         const users = await userModel.find({ role: roleId});
+
+//         console.log('Prosesores ', users);
+
+//         const professors = await professorModel.find().populate('User');
+
+
+//         //const users = await userModel.find({_id: profe.userId});
+//         const listProfessors = users
+
+
+// /*         professors.forEach(  async (profe) => {
+//            // console.log(profe.userId);    
+//             const user = await userModel.findById({_id: profe.userId});
+//             if( user){
+//                 console.log("usuario", user);
+//                 listProfessors.push(user)
+//             }
+//         }); */
+//                 // professors.forEach(professor  => {
+//         //     professorsIds.push(professor._id);
+//         // });
+
+ 
+//         if (professors){
+//             res.json({
+//                 msg:'Professors',
+//                 data: professors
+//             });
+//         }else{
+//             res.json({msg:'Not found.'});
+//         }
+//     }catch(e){
+//         console.error(e);
+//         res.status(500).json({msg:'Server error.'});
+//     }
+// }
 
 // Call by id
 exports.callById = async (req, res) => {
