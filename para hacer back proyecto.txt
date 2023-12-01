@@ -1,4 +1,6 @@
-cuando se cree el profesor que ponga precio por hora y descripcion
-ver como mostrar las cosas que dependen de ids de otras tablas (materias)
+averiguar como guardar imagenes
+buscar como guardar decimales en la base de datos  --> HECHO (creo)
 validaciones
-hacer lo del cors en el backend
+archivo .env para las credenciales de la base de datos y keys que no se pueden compartir
+cuando se elimine el usuario verificar si esta unido a algun usuario de la tabla profesores
+hacer que un profesor actualice su perfil
